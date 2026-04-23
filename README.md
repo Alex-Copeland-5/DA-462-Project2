@@ -62,3 +62,5 @@ This project is designed to simulate a real-world analytics task, where you must
 3.  Do men’s and women’s sports differ in total revenue among selected sports?
 
 4.  Do football programs generate significantly more revenue than other major collegiate sports?
+
+maybe by sports?
