@@ -63,4 +63,4 @@ This project is designed to simulate a real-world analytics task, where you must
 
 4.  Do football programs generate significantly more revenue than other major collegiate sports?
 
-maybe by sports?
+maybe by state?
