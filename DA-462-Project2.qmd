@@ -1,0 +1,35 @@
+---
+title: "Alex Copeland"
+format: 
+  html:
+    embed-resources: true
+editor: visual
+---
+
+```{r}
+#| echo: false
+
+sports <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2022/2022-03-29/sports.csv', show_col_types = FALSE)
+```
+
+```{R}
+#| echo: false
+
+# Subset data into only Division 1 sch
+d1 <- sports[sports$classification_name == "NCAA Division I-FBS" | sports$classification_name == "NCAA Division I-FCS" | sports$classification_name == "NCAA Division I without football", ]
+
+# Define "empty" sector column
+d1$sector <- "Other"
+
+# Add new column for Public or Private
+d1$sector[d1$sector_name == "Public, 4-year or above"] <- "Public"
+d1$sector[d1$sector_name == "Private nonprofit, 4-year or above" | d1$sector_name == "Private for-profit, 4-year or above"] <- "Private"
+```
+
+```{R}
+
+foo <- aggregate(total_rev_menwomen ~ institution_name, data = d1, mean, na.rm = TRUE)
+
+foo2 <-  d1[d1$institution_name == "University of Wisconsin-Madison", ]
+
+```
