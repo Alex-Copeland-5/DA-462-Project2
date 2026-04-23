@@ -1,27 +1,24 @@
-# **\*\*\*\***\_\_\_\_**\*\*\*\***
+# DA-462 Project 2
 
-Constructed an independent data analysis for **\*\*\*\***\_\_\_\_**\*\*\*\***.
+Constructed an independent data analysis for a project.
 
 ## Table of Contents
 
-- [**\*\*\*\***\_\_\_\_**\*\*\*\***](#____)
+- [DA-462 Project 2](#da-462-project-2)
   - [Table of Contents](#table-of-contents)
   - [Project Description](#project-description)
   - [Dataset](#dataset)
   - [Data Dictionary](#data-dictionary)
   - [Research Questions](#research-questions)
-  - [Methods](#methods)
-  - [Results](#results)
-  - [Contact](#contact)
 
 ## Project Description
 
----
+This project is designed to simulate a real-world analytics task, where you must define the problem, determine the approach, and clearly explain the results.
 
 ## Dataset
 
-- **Source:** **\*\*\*\***\_\_\_\_**\*\*\*\***
-- **Description:** **\*\*\*\***\_\_\_\_**\*\*\*\***
+- Source: (https://github.com/rfordatascience/tidytuesday/tree/main/data/2022/2022-03-29)
+- Description: This dataset contains college athletics data for U.S. institutions, including school identifiers, location, division classification, and public or private sector information. It also reports student enrollment, sport-specific participation, and financial measures such as revenue and expenditures for men's and women's athletics programs. Together, these variables support comparisons across schools, sports, and gender categories.
 
 ## Data Dictionary
 
@@ -58,40 +55,10 @@ Constructed an independent data analysis for **\*\*\*\***\_\_\_\_**\*\*\*\***.
 
 ## Research Questions
 
-1.  ***
+1.  Do public and private institutions differ in athletic revenue for selected sports?
 
-2.  ***
+2.  Which sports generate the most revenue?
 
-3.  ***
+3.  Do men’s and women’s sports differ in total revenue among selected sports?
 
-4.  ***
-
-## Methods
-
----
-
-- ***
-- ***
-- ***
-- ***
-- ***
-
-The main variables used in this project were **\*\*\*\***\_\_\_\_**\*\*\*\***.
-
-## Results
-
----
-
-- ***
-- ***
-- ***
-- ***
-- ***
-
-Overall, the results show that **\*\*\*\***\_\_\_\_**\*\*\*\***.
-
-## Contact
-
-Made by **\*\*\*\***\_\_\_\_**\*\*\*\***,
-
----
+4.  Do football programs generate significantly more revenue than other major collegiate sports?
