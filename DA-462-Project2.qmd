@@ -6,6 +6,28 @@ format:
 editor: visual
 ---
 
+# Introduction
+blah blah blah
+
+1. Do public and private institutions differ in athletic revenue for selected sports?
+
+2. Are there differences between the sports revenue?
+
+3. Do men’s and women’s sports differ in total revenue among selected sports?
+
+4. Do football programs generate significantly more revenue than other major collegiate sports?
+
+# Dataset
+
+# Questions
+
+# Methods
+
+talk about cleaning on only d1 schools, public private, and high revenue sports (football, baseball/softball, basketball(men and women), and volleyball)
+
+# Analysis
+
+
 ```{r}
 #| echo: false
 
@@ -14,22 +36,54 @@ sports <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tid
 
 ```{R}
 #| echo: false
+library(ggplot2)
 
-# Subset data into only Division 1 sch
+```
+
+```{R}
+#| echo: false
+
+# Subset data into only Division 1 schools
 d1 <- sports[sports$classification_name == "NCAA Division I-FBS" | sports$classification_name == "NCAA Division I-FCS" | sports$classification_name == "NCAA Division I without football", ]
 
+# Subset again on high revenue sports
+d1_high_revenue <- d1[d1$sports == "Basketball" | d1$sports == "Baseball" | d1$sports == "Football" , ] #| d1$sports == "Volleyball" and | d1$sports == "Softball"
+
 # Define "empty" sector column
-d1$sector <- "Other"
+d1_high_revenue$sector <- "Other"
 
 # Add new column for Public or Private
-d1$sector[d1$sector_name == "Public, 4-year or above"] <- "Public"
-d1$sector[d1$sector_name == "Private nonprofit, 4-year or above" | d1$sector_name == "Private for-profit, 4-year or above"] <- "Private"
+d1_high_revenue$sector[d1_high_revenue$sector_name == "Public, 4-year or above"] <- "Public"
+d1_high_revenue$sector[d1_high_revenue$sector_name == "Private nonprofit, 4-year or above" | d1_high_revenue$sector_name == "Private for-profit, 4-year or above"] <- "Private"
+```
+
+# Question One
+Do public and private institutions differ in athletic revenue for high revenue sports?
+
+```{R}
+#| echo: false
+
+# ---- Question ----
+
+# Subset data into public and private schools
+d1_public <- d1_high_revenue[d1_high_revenue$sector == "Public", ]
+d1_private <- d1_high_revenue[d1_high_revenue$sector == "Private", ]
+
+rq1 <- t.test(d1_public$total_rev_menwomen, d1_private$total_rev_menwomen)
+rq1
+
+```
+
+```{R}
+#| echo: false
+#| warning: false
+
+# Change axis notation (https://scales.r-lib.org/reference/label_number.html)
+ggplot(d1_high_revenue, aes(x = sector, y = total_rev_menwomen)) + geom_boxplot() + labs(title = "Total Revenue by College Sector", x = "Sector", y = 
+"Revenue") + theme_bw() + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"))
 ```
 
 ```{R}
 
-foo <- aggregate(total_rev_menwomen ~ institution_name, data = d1, mean, na.rm = TRUE)
-
-foo2 <-  d1[d1$institution_name == "University of Wisconsin-Madison", ]
 
 ```
