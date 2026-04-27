@@ -6,20 +6,22 @@ format:
 editor: visual
 ---
 
+# Dataset
+
+This dataset comes from tidytuesday: https://github.com/rfordatascience/tidytuesday/blob/main/data/2022/2022-03-29/readme.md
+
 # Introduction
-blah blah blah
+
+In this study, there will be multiple research questions asked based on collegiate sports and their budgets. 
+
+
+# Questions
 
 1. Do public and private institutions differ in athletic revenue for selected sports?
 
 2. Are there differences between the sports revenue?
 
-3. Do men’s and women’s sports differ in total revenue among selected sports?
-
-4. Do football programs generate significantly more revenue than other major collegiate sports?
-
-# Dataset
-
-# Questions
+3. Which sport generates the best profit?
 
 # Methods
 
@@ -38,6 +40,7 @@ sports <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tid
 #| echo: false
 library(ggplot2)
 
+# do kable and make tables pretty tables and summary statistics table
 ```
 
 ```{R}
@@ -46,15 +49,18 @@ library(ggplot2)
 # Subset data into only Division 1 schools
 d1 <- sports[sports$classification_name == "NCAA Division I-FBS" | sports$classification_name == "NCAA Division I-FCS" | sports$classification_name == "NCAA Division I without football", ]
 
+# rename for graphing purposes
+d1$Sports <- d1$sports
+
 # Subset again on high revenue sports
-d1_high_revenue <- d1[d1$sports == "Basketball" | d1$sports == "Baseball" | d1$sports == "Football" , ] #| d1$sports == "Volleyball" and | d1$sports == "Softball"
+d1_high_revenue <- d1[d1$Sports == "Basketball" | d1$Sports == "Baseball" | d1$Sports == "Football" | d1$Sports == "Softball", ]
 
 # Define "empty" sector column
-d1_high_revenue$sector <- "Other"
+d1_high_revenue$Sector <- "Other"
 
 # Add new column for Public or Private
-d1_high_revenue$sector[d1_high_revenue$sector_name == "Public, 4-year or above"] <- "Public"
-d1_high_revenue$sector[d1_high_revenue$sector_name == "Private nonprofit, 4-year or above" | d1_high_revenue$sector_name == "Private for-profit, 4-year or above"] <- "Private"
+d1_high_revenue$Sector[d1_high_revenue$sector_name == "Public, 4-year or above"] <- "Public"
+d1_high_revenue$Sector[d1_high_revenue$sector_name == "Private nonprofit, 4-year or above" | d1_high_revenue$sector_name == "Private for-profit, 4-year or above"] <- "Private"
 ```
 
 # Question One
@@ -63,11 +69,12 @@ Do public and private institutions differ in athletic revenue for high revenue s
 ```{R}
 #| echo: false
 
-# ---- Question ----
+# ---- Question One ----
+# Do public and private institutions differ in athletic revenue for selected sports?
 
 # Subset data into public and private schools
-d1_public <- d1_high_revenue[d1_high_revenue$sector == "Public", ]
-d1_private <- d1_high_revenue[d1_high_revenue$sector == "Private", ]
+d1_public <- d1_high_revenue[d1_high_revenue$Sector == "Public", ]
+d1_private <- d1_high_revenue[d1_high_revenue$Sector == "Private", ]
 
 rq1 <- t.test(d1_public$total_rev_menwomen, d1_private$total_rev_menwomen)
 rq1
@@ -79,11 +86,71 @@ rq1
 #| warning: false
 
 # Change axis notation (https://scales.r-lib.org/reference/label_number.html)
-ggplot(d1_high_revenue, aes(x = sector, y = total_rev_menwomen)) + geom_boxplot() + labs(title = "Total Revenue by College Sector", x = "Sector", y = 
+ggplot(d1_high_revenue, aes(x = Sector, y = total_rev_menwomen, fill = Sector)) + geom_boxplot() + labs(title = "Total Revenue by College Sector", x = "Sector", y = 
 "Revenue") + theme_bw() + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"))
+
+# TODO: try to make a graph with x and y lims to produce a "zoomed in" plot (tomorrow), then review everything and see if its time to start writing. if everything goes well do the three write ups and then call for help with intodruction and conclusion. Review with carr to turn in. thank jesus when done!
 ```
 
 ```{R}
+#| echo: false
 
+# ---- Question Two ----
+# Are there differences between the sports revenue?
+
+rq2 <- aov(total_rev_menwomen ~ Sports, data = d1_high_revenue)
+summary(rq2)
+rq2_tukeys <- TukeyHSD(rq2)
+
+# softball and baseball have similar revenue levels p > 0.05
+rq2_tukeys
+```
+
+```{R}
+#| echo: false
+#| warning: false
+
+rq2_plot <- ggplot(d1_high_revenue, aes(x = Sports, y = total_rev_menwomen, fill = Sector)) + geom_bar(stat = "summary", fun = "mean") + labs(title = "Mean Total Revenue by Sport", x = "Sport", y = "Mean Total Revenue") + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"), breaks = (c(0, 5000000, 10000000, 15000000, 20000000, 25000000, 30000000, 35000000))) + theme_bw()
+
+rq2_plot
+```
+
+
+```{R}
+#| echo: false
+
+# ---- Question Three ----
+# Which sport generates the best profit?
+
+# Create profit column
+d1_high_revenue$profit <- d1_high_revenue$total_rev_menwomen - d1_high_revenue$total_exp_menwomen
+
+# Change from scientific notation in df, (https://www.r-bloggers.com/2022/08/how-to-turn-off-scientific-notation-in-r/)
+options(scipen = 999)
+
+# Run anova test
+rq3 <- aov(profit ~ Sports, data = d1_high_revenue)
+summary(rq3)
+
+rq3_tukeys <- TukeyHSD(rq3)
+rq3_tukeys
+```
+
+```{R}
+#| echo: false
+
+# Stacked bar plot with y axis
+rq3_plot <- ggplot(d1_high_revenue, aes(x = Sports, y = profit, fill = Sports)) + geom_bar(position = "stack", stat = "summary", fun = "mean") + labs(title = "Mean Total Profit by Sport", x = "Sport", y = "Profit") +  scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"), breaks = (c(-300000, 0, 1000000, 3000000, 5000000, 7000000))) + theme_bw() + geom_hline(yintercept = 0, linetype = "solid")
+
+rq3_plot
 
 ```
+
+
+
+
+
+
+
+rq3_plot <- ggplot(d1_high_revenue, aes(x = Sports, y = profit, fill = Sports)) + geom_bar(stat = "summary", fun = "mean") + labs(title = "Mean Total Profit by Sport", x = "Sport", y = "Profit") +  scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"), breaks = (c(-300000, 0, 1000000, 3000000, 5000000, 7000000))) + theme_bw()
+
