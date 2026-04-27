@@ -86,10 +86,16 @@ rq1
 #| warning: false
 
 # Change axis notation (https://scales.r-lib.org/reference/label_number.html)
-ggplot(d1_high_revenue, aes(x = Sector, y = total_rev_menwomen, fill = Sector)) + geom_boxplot() + labs(title = "Total Revenue by College Sector", x = "Sector", y = 
-"Revenue") + theme_bw() + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"))
+ggplot(d1_high_revenue, aes(x = Sector, y = total_rev_menwomen, fill = Sector)) + geom_boxplot() + labs(title = "Total Revenue by College Sector", x = "Sector", y = "Revenue") + theme_bw() + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"))
+
+# Subset data where revenue is less than 25m to "zoom" graph.
+d1_less_rev <- d1_high_revenue[d1_high_revenue$total_rev_menwomen < 2500000 & !is.na(d1_high_revenue$total_rev_menwomen), ]
+
+ggplot(d1_less_rev, aes(x = Sector, y = total_rev_menwomen, fill = Sector)) + geom_boxplot() + labs(title = "Total Revenue by College Sector", x = "Sector", y = "Revenue") + theme_bw() + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"))
 
 # TODO: try to make a graph with x and y lims to produce a "zoomed in" plot (tomorrow), then review everything and see if its time to start writing. if everything goes well do the three write ups and then call for help with intodruction and conclusion. Review with carr to turn in. thank jesus when done!
+
+# TODO: for this plot try to make stacked histograms and if not "trim" the original graph to where the outliers are not shown temporarily and mention that the plot is zoomed in.
 ```
 
 ```{R}
@@ -110,7 +116,7 @@ rq2_tukeys
 #| echo: false
 #| warning: false
 
-rq2_plot <- ggplot(d1_high_revenue, aes(x = Sports, y = total_rev_menwomen, fill = Sector)) + geom_bar(stat = "summary", fun = "mean") + labs(title = "Mean Total Revenue by Sport", x = "Sport", y = "Mean Total Revenue") + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"), breaks = (c(0, 5000000, 10000000, 15000000, 20000000, 25000000, 30000000, 35000000))) + theme_bw()
+rq2_plot <- ggplot(d1_high_revenue, aes(x = Sports, y = total_rev_menwomen, fill = Sector)) + geom_bar(stat = "summary", fun = "mean", color = "black") + labs(title = "Mean Total Revenue by Sport", x = "Sport", y = "Mean Total Revenue") + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"), breaks = (c(0, 5000000, 10000000, 15000000, 20000000, 25000000, 30000000, 35000000))) + theme_bw()
 
 rq2_plot
 ```
@@ -140,7 +146,7 @@ rq3_tukeys
 #| echo: false
 
 # Stacked bar plot with y axis
-rq3_plot <- ggplot(d1_high_revenue, aes(x = Sports, y = profit, fill = Sports)) + geom_bar(position = "stack", stat = "summary", fun = "mean") + labs(title = "Mean Total Profit by Sport", x = "Sport", y = "Profit") +  scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"), breaks = (c(-300000, 0, 1000000, 3000000, 5000000, 7000000))) + theme_bw() + geom_hline(yintercept = 0, linetype = "solid")
+rq3_plot <- ggplot(d1_high_revenue, aes(x = Sports, y = profit, fill = Sports)) + geom_bar(position = "stack", stat = "summary", fun = "mean", color = "black") + labs(title = "Mean Total Profit by Sport", x = "Sport", y = "Profit") +  scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"), breaks = (c(-300000, 0, 1000000, 3000000, 5000000, 7000000))) + theme_bw() + geom_hline(yintercept = 0, linetype = "solid")
 
 rq3_plot
 
