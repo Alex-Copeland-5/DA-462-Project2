@@ -134,7 +134,7 @@ $\text{Profit} = \text{Total Revenue - Total Expenditure}$
 :::
 
 ## Research Question One
-For research question one, the data were subset into public and private schools based off the variable sector. A t-test was conducted on mean total revenue between the two groups of schools. This test allows us to see whether the mean total revenue is different between public and private schools. Because of the data being heavily right skewed, two box plots were made. The first box plot only plots the observations with less than $12.5m revenue to interpret the boxes easier. Note, that this does not remove observations, instead it does not show them on the plot. For the second box plot, it plots the entire dataset.
+For research question one, the data was subset into public and private schools based off the sector variable. A t-test was conducted on mean total revenue between the two groups of schools. This test allows us to see whether the mean total revenue is different between public and private schools. Because of the data being heavily right skewed, two box plots were made. The first box plot only plots the observations with less than $12.5m revenue to interpret the boxes easier. Note, that this does not remove observations, instead it does not show them on the plot. For the second box plot, it plots the entire dataset.
 
 ## Research Questions Two and Three
 
@@ -179,7 +179,7 @@ rq1_plot_trim
 ```
 :::
 
-This is the box plot showing all observations. Note that the prior box plot did not remove the observation, instead it did not show them on the graph.
+This is the box plot showing all observations. Note that the prior box plot did not remove the observations, instead it did not show them on the plot.
 
 ::: {style="text-align: center;"}
 $\textbf{Figure 4}$
@@ -195,7 +195,7 @@ rq1_plot
 
 Are there differences between the sports revenue?
 
-A Kruskal-Wallis test was conducted to examine differences in total revenue for each college sport. The overall test was statistically significant, $\chi^2$(3) = 4,266.08, p < 0.0001. Based on this, it can be concluded that there is statistical evidence of differences in total revenue for each of the sports. Additionally, it was found that the effect size was large $\eta^2$(0.70), indicating that sports explains a large role in the differences of total revenue. 
+A Kruskal-Wallis test was conducted to examine differences in total revenue for each college sport. The overall test was statistically significant, $\chi^2$(3) = 4,266.08, p < 0.0001. Based on this, it can be concluded that there is statistical evidence of differences in total revenue for each of the sports. Additionally, it was found that the effect size was large $\eta^2$(0.70), indicating that sports explain a large role in the differences of total revenue. 
 
 A post-hoc Dunn's test was run to determine which sports revenue were different. The test showed that each pairwise comparisons of revenue were statistically different. The box plot below also supports these findings.
 
@@ -211,7 +211,7 @@ rq2_plot
 ## Research Question Three
 Which sport generates the highest profit?
 
-A Kruskal-Wallis test was conducted to examine differences in profits for each college sport. The overall test was statistically significant, $\chi^2$(3) = 620.45, p < 0.0001. Based on this, it can be concluded that there is  statistical evidence of differences in profits for each of the sports. Additionally, it was found that the effect size was moderate $\eta^2$(0.10), indicating that sports explains a moderate role in the differences of profits for each sport. 
+A Kruskal-Wallis test was conducted to examine differences in profits for each college sport. The overall test was statistically significant, $\chi^2$(3) = 620.45, p < 0.0001. Based on this, it can be concluded that there is statistical evidence of differences in profits for each of the sports. Additionally, it was found that the effect size was moderate $\eta^2$(0.10), indicating that sports explain a moderate role in the differences of profits for each sport. 
 
 A post-hoc Dunn's test was run to determine which sports profit were different. The test showed that all pairwise comparisons of profit were statistically different. The box plot below also supports these findings.
 
