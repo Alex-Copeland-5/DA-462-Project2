@@ -48,21 +48,65 @@ sd_public <- sd(d1_public$total_rev_menwomen, na.rm = TRUE)
 sd_private <- sd(d1_private$total_rev_menwomen, na.rm = TRUE)
 
 rq1 <- t.test(d1_public$total_rev_menwomen, d1_private$total_rev_menwomen)
+<<<<<<< HEAD
+=======
+# rq1
+>>>>>>> ee2a2ffdb78bbd094aca2cdfef05f0e85cf2c7c9
 
 # Plots
 # coord cartesian (ylim) (in office hours) Change axis notation (https://scales.r-lib.org/reference/label_number.html)
 # Trimed Plot
 rq1_plot_trim <- ggplot(d1_high_revenue, aes(x = Sector, y = total_rev_menwomen, fill = Sector)) + geom_boxplot() + labs(title = "Total Revenue by College Sector (Trimmed to fit)", x = "Sector", y = "Revenue") + theme_bw() + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"), breaks = c(0,2000000, 4000000, 6000000, 8000000, 10000000, 12000000)) + coord_cartesian(ylim = c(0,12500000))
 
+<<<<<<< HEAD
 rq1_plot <- ggplot(d1_high_revenue, aes(x = Sector, y = total_rev_menwomen, fill = Sector)) + geom_boxplot() + labs(title = "Total Revenue by College Sector", x = "Sector", y = "Revenue") + theme_bw() + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"))
+=======
+```{R}
+#| echo: false
+#| warning: false
+
+# Change axis notation (https://scales.r-lib.org/reference/label_number.html)
+ggplot(d1_high_revenue, aes(x = Sector, y = total_rev_menwomen, fill = Sector)) + geom_boxplot() + labs(title = "Total Revenue by College Sector", x = "Sector", y = "Revenue") + theme_bw() + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"))
+
+# coord cartesian (ylim)
+
+
+# TODO: try to make a graph with x and y lims to produce a "zoomed in" plot (tomorrow), then review everything and see if its time to start writing. if everything goes well do the three write ups and then call for help with intodruction and conclusion. Review with carr to turn in. thank jesus when done!
+
+# TODO: for this plot try to make stacked histograms and if not "trim" the original graph to where the outliers are not shown temporarily and mention that the plot is zoomed in.
+```
+
+```{R}
+# Subset data where revenue is less than 25m to "zoom" graph.
+d1_less_rev <- d1_high_revenue[d1_high_revenue$total_rev_menwomen < 2500000 & !is.na(d1_high_revenue$total_rev_menwomen), ]
+
+ggplot(d1_less_rev, aes(x = Sector, y = total_rev_menwomen, fill = Sector)) + geom_boxplot() + labs(title = "Total Revenue by College Sector", x = "Sector", y = "Revenue") + theme_bw() + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"))
+```
+
+```{R}
+#| echo: false
+>>>>>>> ee2a2ffdb78bbd094aca2cdfef05f0e85cf2c7c9
 
 # ---- Question Two ----
 # Are there differences between the sports revenue?
 
+<<<<<<< HEAD
 # non parametric compared to anova (kruskal wallis test)
 # Kruskal assigns ranks smallest to largest to the entire revenue column, then test on the average rank per sport. 
 
 rq2 <- kruskal.test(total_rev_menwomen ~ Sports, data = d1_high_revenue)
+=======
+rq2 <- aov(total_rev_menwomen ~ Sports, data = d1_high_revenue)
+# summary(rq2)
+rq2_tukeys <- TukeyHSD(rq2)
+rq2_tukeys
+# softball and baseball have similar revenue levels p > 0.05
+
+#non parametric compared to anova or a transformation (kruskal wallace test)
+
+# rq2_tukeys
+```
+>>>>>>> ee2a2ffdb78bbd094aca2cdfef05f0e85cf2c7c9
 
 # Dunns table says column mean - row mean. so if (r1, c1) > 0, then column has a higher revenue. If (r1, c1) < 0, then column has a lower revenue. Confirm findings with boxplot to see the order.
 dunn_result <- dunn.test(d1_high_revenue$total_rev_menwomen, d1_high_revenue$Sports)
@@ -87,6 +131,20 @@ rq3_dunn <- dunn.test(d1_high_revenue$profit, d1_high_revenue$Sports)
 # Change from scientific notation in df, (https://www.r-bloggers.com/2022/08/how-to-turn-off-scientific-notation-in-r/)
 options(scipen = 999)
 
+<<<<<<< HEAD
+=======
+# Run anova test
+rq3 <- aov(profit ~ Sports, data = d1_high_revenue)
+# summary(rq3)
+
+rq3_tukeys <- TukeyHSD(rq3)
+# rq3_tukeys
+```
+
+```{R}
+#| echo: false
+
+>>>>>>> ee2a2ffdb78bbd094aca2cdfef05f0e85cf2c7c9
 # Stacked bar plot with y axis
 rq3_plot <- ggplot(d1_high_revenue, aes(x = Sports, y = profit, fill = Sports)) + geom_bar(position = "stack", stat = "summary", fun = "mean", color = "black") + labs(title = "Mean Total Profit by Sport", x = "Sport", y = "Profit") +  scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"), breaks = (c(-300000, 0, 1000000, 3000000, 5000000, 7000000))) + theme_bw() + geom_hline(yintercept = 0, linetype = "solid")
 
@@ -99,6 +157,7 @@ rq2_hist <- ggplot(d1_high_revenue, aes(x = profit)) + geom_histogram(aes(), bin
 median_public <- median(d1_public$total_rev_menwomen, na.rm = TRUE)
 median_private <- median(d1_private$total_rev_menwomen, na.rm = TRUE)
 
+<<<<<<< HEAD
 ```
 
 # Dataset
@@ -229,3 +288,6 @@ The results of the t-test for research question one shows that there is a statis
 For research question two, the Kruskal-Wallis showed that total revenue is significantly different across all sports. The post-hoc Dunn's test showed that all pairwise comparisons of the sports are statistically different. Looking at the grouped mean bar plot, we can see that Football is clearly has the highest mean revenue $M$ = 19,924,123.7, with Basketball having a mean revenue $M$ = 6,490,734.6, noticeably lower than Football, both Baseballs mean revenue $M$ = 1,164,631.9, and Softballs mean revenue $M$ = 709,709.2, being drastically lower than both Football and Basketball. The model suggest that the type of sport heavily impacts the revenue made.
 
 The results for research question three are similar to research question two. The Kruskal-Wallis test showed that there were significant differences in profit across all sports. The post-hoc Dunn's test resulted in the same conclusion of all pairwise comparisons for sports profit were statistically different. Looking at the grouped means bar plot, we can see the four sports Baseball and Softball had negative mean profit $M$ = -284,203.8 and $M$ = -239,017.4 respectively, and Football and Basketball had mean profits of $M$ = 7,182,326.9 and $M$ = 381,774.5 respectively. Therefore that these findings suggest that Football represents the majority of the entire schools athletics profit.
+=======
+```
+>>>>>>> ee2a2ffdb78bbd094aca2cdfef05f0e85cf2c7c9
