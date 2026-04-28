@@ -1,80 +1,23 @@
 ---
-title: "Alex Copeland"
+title: "Collegiate Athletic Budget Analysis"
 format: 
   html:
     embed-resources: true
 editor: visual
 ---
 
-# Dataset
-
-This dataset comes from tidytuesday: https://github.com/rfordatascience/tidytuesday/blob/main/data/2022/2022-03-29/readme.md
-
-# Introduction
-
-In this study, there will be multiple research questions asked based on collegiate sports and their budgets. 
-
-
-# Questions
-
-1. Do public and private institutions differ in athletic revenue for selected sports?
-
-2. Are there differences between the sports revenue?
-
-3. Which sport generates the best profit?
-
-# Methods
-
-## Data Cleaning
-
-The dataset was filtered to contain only NCAA Division I schools. This allows for more consistent budgets, since smaller schools usually have less funding. Also, the dataset was filtered to only contain the four sports basketball, football, baseball, and softball due to every other sport having very little budgeting. Two new variables sector and profit were created. Sector is the categorical variable that represents whether a schools is public or private. The variable profit was defined to be
-
-::: {style="text-align: center;"}
-$\text{Profit} = \text{Total Revenue - Total Expenditure}$ 
-:::
-
-## Research Question One
-For research question one, the data were subset into public and private schools based off the variable sector. A t-test was conducted on mean total revenue between the two groups of schools. This test allows us to see whether the mean total revenue is different between public and private schools. Because of the data being heavily right skewed, two box plots were made. The first box plot only plots the observations with less than 12.5$m revenue to interpret the boxes easier. Note that this does not remove observations, instead it does not show them on the plot. For the second box plot, it plots the entire dataset.
-
-## Research Questions Two and Three
-
-For research questions two and three, both performed a Kruskal-Wallis test to compare distributions between variables. Research question two ask whether total revenue differs across all sports, and research question three asks if profit differs across all sports. Both questions violate the normality assumption the ANOVA test makes, this can also be seen in the histograms below. Because of this, both questions used the nonparametric alternative, the Kruskal-Wallis test.
-
-Research question two and three overall were both signficant, so a post-hoc Dunn's test was run to find which specific pairwise comparison were signficantly different. For research question two and three all pairwise comparisons of sports revenue and sports profit were stastically different. 
-
-# Analysis
-
-```{R}
-# Kruskal Wallis notes
-# https://biostatsquid.com/comparing-multiple-groups-kruskal-wallis-test-in-r/
-# https://library.virginia.edu/data/articles/getting-started-with-the-kruskal-wallis-test
-
-# Breaking normailty assumptions
-# https://www.datanovia.com/en/lessons/anova-in-r/
-
-
-```
-
-
 ```{r}
 #| echo: false
+#| warning: false
+#| output: false
 
 sports <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2022/2022-03-29/sports.csv', show_col_types = FALSE)
-```
 
-```{R}
-#| echo: false
-#| warning: false
 
 library(ggplot2)
 library(rstatix)
 library(dunn.test)
 
-# do kable and make tables pretty tables and summary statistics table
-```
-
-```{R}
-#| echo: false
 
 # Subset data into only Division 1 schools
 d1 <- sports[sports$classification_name == "NCAA Division I-FBS" | sports$classification_name == "NCAA Division I-FCS" | sports$classification_name == "NCAA Division I without football", ]
@@ -91,13 +34,7 @@ d1_high_revenue$Sector <- "Other"
 # Add new column for Public or Private
 d1_high_revenue$Sector[d1_high_revenue$sector_name == "Public, 4-year or above"] <- "Public"
 d1_high_revenue$Sector[d1_high_revenue$sector_name == "Private nonprofit, 4-year or above" | d1_high_revenue$sector_name == "Private for-profit, 4-year or above"] <- "Private"
-```
 
-# Question One
-Do public and private institutions differ in athletic revenue for high revenue sports?
-
-```{R}
-#| echo: false
 
 # ---- Question One ----
 # Do public and private institutions differ in athletic revenue for selected sports?
@@ -112,56 +49,12 @@ sd_private <- sd(d1_private$total_rev_menwomen, na.rm = TRUE)
 
 rq1 <- t.test(d1_public$total_rev_menwomen, d1_private$total_rev_menwomen)
 
-
-```
-
-An independent-samples t test was conducted to compare mean total revenue between public and private institutions. Public institutions had a mean total revenue of M = 7,341,701 (SD = 16473707), whereas private institutions had a mean of M = 4,862,737 (SD = 9706167). This difference was statistically significant, t(5560.8) = 7.24, p < .0001. These results indicate that public schools have significantly higher sports revenue than private schools.
-
-The boxplot below also supports sports revenue differs between sectors.
-
-::: {style="text-align: center;"}
-$\textbf{Figure 1}$ 
-
-```{R}
-#| echo: false
-#| warning: false
-
-# coord cartesian (ylim) (in office hours)
-# Change axis notation (https://scales.r-lib.org/reference/label_number.html)
-
+# Plots
+# coord cartesian (ylim) (in office hours) Change axis notation (https://scales.r-lib.org/reference/label_number.html)
 # Trimed Plot
 rq1_plot_trim <- ggplot(d1_high_revenue, aes(x = Sector, y = total_rev_menwomen, fill = Sector)) + geom_boxplot() + labs(title = "Total Revenue by College Sector (Trimmed to fit)", x = "Sector", y = "Revenue") + theme_bw() + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"), breaks = c(0,2000000, 4000000, 6000000, 8000000, 10000000, 12000000)) + coord_cartesian(ylim = c(0,12500000))
 
-rq1_plot_trim
-```
-:::
-
-This is the boxplot showing all observations. Note that the prior boxplot did not remove the observation, instead it did not show them on the graph.
-
-::: {style="text-align: center;"}
-$\textbf{Figure 2}$
-
-```{R}
-#| echo: false
-#| warning: false
-
-# Change axis notation (https://scales.r-lib.org/reference/label_number.html)
 rq1_plot <- ggplot(d1_high_revenue, aes(x = Sector, y = total_rev_menwomen, fill = Sector)) + geom_boxplot() + labs(title = "Total Revenue by College Sector", x = "Sector", y = "Revenue") + theme_bw() + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"))
-
-rq1_plot
-```
-:::
-
-
-
-
-
-# Question Two
-
-Are there differences between the sports revenue?
-
-```{R}
-#| echo: false
 
 # ---- Question Two ----
 # Are there differences between the sports revenue?
@@ -171,57 +64,14 @@ Are there differences between the sports revenue?
 
 rq2 <- kruskal.test(total_rev_menwomen ~ Sports, data = d1_high_revenue)
 
-
 # Dunns table says column mean - row mean. so if (r1, c1) > 0, then column has a higher revenue. If (r1, c1) < 0, then column has a lower revenue. Confirm findings with boxplot to see the order.
-
 dunn_result <- dunn.test(d1_high_revenue$total_rev_menwomen, d1_high_revenue$Sports)
 
 #n = 6105
 rq2_n <-kruskal_effsize(d1_high_revenue, total_rev_menwomen ~ Sports)
 
-```
-
-A Kruskal-Wallis test was conducted to examine differences in total revenue for each college sport. The overall test was statistically significant, $\chi^2$(3) = 4266.08, p < 0.0001. Based on this, it can be concluded that there is  statistical evidence of differences in total revenue for each of the sports. Additionally, it was found that the effect size was large $\eta^2$(0.70), indicating that sports explains a large role in the differences of total revenue. 
-
-A post-hoc Dunn's test was run to determine which sports revenue were different. The test showed that each pairwise comparison of revenue were statistically different. The box plot below also supports these findings.
-
-::: {style="text-align: center; padding: 20px 0;"}
-$\textbf{Figure 3}$
-
-```{R}
-#| echo: false
-#| warning: false
-
 rq2_plot <- ggplot(d1_high_revenue, aes(x = Sports, y = total_rev_menwomen, fill = sports)) + geom_bar(stat = "summary", fun = "mean", color = "black") + labs(title = "Mean Total Revenue by Sport", x = "Sport", y = "Mean Total Revenue") + scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"), breaks = (c(0, 1000000, 5000000, 10000000, 15000000 ,20000000, 25000000, 30000000, 35000000))) + theme_bw() + geom_hline(yintercept = 19924123.7, linetype = "dotted") + geom_hline(yintercept = 1164631.9, linetype = "dotted") + geom_hline(yintercept = 6490734.6, linetype = "dotted") + geom_hline(yintercept = 709709.2, linetype = "dotted")
 
-rq2_plot
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Question Three
-Which sport generates the best profit?
-
-```{R}
-#| echo: false
 
 # ---- Question Three ----
 # Which sport generates the best profit?
@@ -229,32 +79,153 @@ Which sport generates the best profit?
 # Create profit column
 d1_high_revenue$profit <- d1_high_revenue$total_rev_menwomen - d1_high_revenue$total_exp_menwomen
 
-
-
 rq3 <- kruskal.test(profit ~ Sports, data = d1_high_revenue)
 rq3_n <- kruskal_effsize(d1_high_revenue, profit ~ Sports)
-
-# Dunns table says column mean - row mean. so if (r1, c1) > 0, then column has a higher revenue. If (r1, c1) < 0, then column has a lower revenue. Confirm findings with boxplot to see the order.
-
 rq3_dunn <- dunn.test(d1_high_revenue$profit, d1_high_revenue$Sports)
-```
 
-A Kruskal-Wallis test was conducted to examine differences in profits for each college sport. The overall test was statistically significant, $\chi^2$(3) = 620.45, p < 0.0001. Based on this, it can be concluded that there is  statistical evidence of differences in profits for each of the sports. Additionally, it was found that the effect size was moderate $\eta^2$(0.10), indicating that sports explains a moderate role in the differences of profits for each sport. 
-
-A post-hoc Dunn's test was run to determine which sports profit were different. The test showed that all pairwise comparisons of profit were statistically different. The box plot below also supports these findings. Notice that 
-
-
-```{R}
-#| echo: false
-
+# Plot
 # Change from scientific notation in df, (https://www.r-bloggers.com/2022/08/how-to-turn-off-scientific-notation-in-r/)
 options(scipen = 999)
-
 
 # Stacked bar plot with y axis
 rq3_plot <- ggplot(d1_high_revenue, aes(x = Sports, y = profit, fill = Sports)) + geom_bar(position = "stack", stat = "summary", fun = "mean", color = "black") + labs(title = "Mean Total Profit by Sport", x = "Sport", y = "Profit") +  scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M"), breaks = (c(-300000, 0, 1000000, 3000000, 5000000, 7000000))) + theme_bw() + geom_hline(yintercept = 0, linetype = "solid")
 
-rq3_plot
+# Histograms
+rq1_hist <- ggplot(d1_high_revenue, aes(x = total_rev_menwomen)) + geom_histogram(aes(), bins = 30, fill = "lightblue", color = "black") + labs(title = "Histogram of Revenue", x = " Revenue", y = "Number of Schools") + theme_bw()
+
+rq2_hist <- ggplot(d1_high_revenue, aes(x = profit)) + geom_histogram(aes(), bins = 30, fill = "lightblue", color = "black") + labs(title = "Histogram of Profit", x = "Profit", y = "Number of Schools") + theme_bw()
+
+# Median
+median_public <- median(d1_public$total_rev_menwomen, na.rm = TRUE)
+median_private <- median(d1_private$total_rev_menwomen, na.rm = TRUE)
 
 ```
 
+# Dataset
+
+This dataset comes from tidytuesday: https://github.com/rfordatascience/tidytuesday/blob/main/data/2022/2022-03-29/readme.md
+
+# Introduction
+
+In this study, there will be three research questions asked based on collegiate sports and their budgets. We will be using multiple statistical methods in this study to determine any statistically significant relationships between collegeiate sports budgets and the characteristics of the dataset. The three research questions are the following:
+
+1. Do public and private institutions differ in athletic revenue for selected sports?
+
+2. Are there differences between the sports revenue?
+
+3. Which sport generates the best profit?
+
+Also, the following are key variables used in this study:
+
+-   Sports - Type of sport
+-   Sector - Type of school (Public or Private)
+-   total_rev_menwomen - Total revenue for each sport program
+-   total_exp_menwomen - Total expenses for each sport program
+-   Profit - Defined as total revenue minus total expenses
+
+# Methods
+
+## Data Cleaning
+
+The dataset was filtered to contain only NCAA Division I schools. This allows for more consistent budgets, since smaller schools usually have less funding. The dataset was also filtered to only contain the four sports basketball, football, baseball, and softball, due to every other sport having very little budgeting. Two new variables sector and profit were created. Sector is the categorical variable that represents whether a schools is public or private. The variable profit was defined to be
+
+::: {style="text-align: center;"}
+$\text{Profit} = \text{Total Revenue - Total Expenditure}$ 
+:::
+
+## Research Question One
+For research question one, the data were subset into public and private schools based off the variable sector. A t-test was conducted on mean total revenue between the two groups of schools. This test allows us to see whether the mean total revenue is different between public and private schools. Because of the data being heavily right skewed, two box plots were made. The first box plot only plots the observations with less than 12.5$m revenue to interpret the boxes easier. Note that this does not remove observations, instead it does not show them on the plot. For the second box plot, it plots the entire dataset.
+
+## Research Questions Two and Three
+
+For research questions two and three, both performed a Kruskal-Wallis test to compare distributions between variables. Research question two ask whether total revenue differs across all sports, and research question three asks if profit differs across all sports. Both questions violate the normality assumption the ANOVA test makes, this can also be seen in the histograms below. Because of this, both questions used the nonparametric alternative, the Kruskal-Wallis test.
+
+Research question two and three overall were both significant, so a post-hoc Dunn's test was run to find which specific pairwise comparison were significantly different. For research question two and three all pairwise comparisons of sports revenue and sports profit were statistically different. 
+
+::: {style="text-align: center;"}
+$\textbf{Figure 1}$ 
+```{R}
+#| echo: false
+#| warning: false
+rq1_hist
+```
+:::
+::: {style="text-align: center;"}
+$\textbf{Figure 2}$
+```{R}
+#| echo: false
+#| warning: false
+rq2_hist
+```
+:::
+# Analysis
+
+
+## Research Question One
+Do public and private institutions differ in athletic revenue for high revenue sports?
+
+An independent-samples t test was conducted to compare mean total revenue between public and private institutions. Public institutions had a mean total revenue of M = 7,341,701 (SD = 16,473,707), whereas private institutions had a mean of M = 4,862,737 (SD = 9,706,167). This difference was statistically significant, t(5,560.8) = 7.24, p < .0001. These results indicate that public schools have significantly higher sports revenue than private schools.
+
+The boxplot below also supports sports revenue differs between sectors.
+
+::: {style="text-align: center;"}
+$\textbf{Figure 3}$ 
+
+```{R}
+#| echo: false
+#| warning: false
+rq1_plot_trim
+```
+:::
+
+This is the box plot showing all observations. Note that the prior box plot did not remove the observation, instead it did not show them on the graph.
+
+::: {style="text-align: center;"}
+$\textbf{Figure 4}$
+
+```{R}
+#| echo: false
+#| warning: false
+rq1_plot
+```
+:::
+
+## Research Question Two
+
+Are there differences between the sports revenue?
+
+A Kruskal-Wallis test was conducted to examine differences in total revenue for each college sport. The overall test was statistically significant, $\chi^2$(3) = 4,266.08, p < 0.0001. Based on this, it can be concluded that there is statistical evidence of differences in total revenue for each of the sports. Additionally, it was found that the effect size was large $\eta^2$(0.70), indicating that sports explains a large role in the differences of total revenue. 
+
+A post-hoc Dunn's test was run to determine which sports revenue were different. The test showed that each pairwise comparison of revenue were statistically different. The box plot below also supports these findings.
+
+::: {style="text-align: center; padding: 20px 0;"}
+$\textbf{Figure 5}$
+
+```{R}
+#| echo: false
+#| warning: false
+rq2_plot
+```
+:::
+## Research Question Three
+Which sport generates the best profit?
+
+A Kruskal-Wallis test was conducted to examine differences in profits for each college sport. The overall test was statistically significant, $\chi^2$(3) = 620.45, p < 0.0001. Based on this, it can be concluded that there is  statistical evidence of differences in profits for each of the sports. Additionally, it was found that the effect size was moderate $\eta^2$(0.10), indicating that sports explains a moderate role in the differences of profits for each sport. 
+
+A post-hoc Dunn's test was run to determine which sports profit were different. The test showed that all pairwise comparisons of profit were statistically different. The box plot below also supports these findings.
+
+
+```{R}
+#| echo: false
+#| warning: false
+options(scipen = 999)
+rq3_plot
+```
+
+# Conclusion
+
+The results of the t-test for research question one shows that there is a statistically signficant difference in total revenue between public and private schools. Public schools on average generate higher revenue than private schools. These findings suggest public schools make more likely based off of bigger school sizes and more fans for each sport program. The box plot supports these findings as well showing that public schools have a median of $M$ = 2001026, and private schools have a median of $M$ = 1863975.
+
+For research question two, the Kruskal-Wallis showed that total revenue is significantly different across all sports. The post-hoc Dunn's test showed that all pairwise comparisons of the sports are statistically different. Looking at the grouped mean bar plot, we can see that Football is clearly has the highest mean revenue $M$ = 19,924,123.7, with Basketball having a mean revenue $M$ = 6,490,734.6, noticeably lower than Football, both Baseballs mean revenue $M$ = 1,164,631.9, and Softballs mean revenue $M$ = 709,709.2, being drastically lower than both Football and Basketball. The model suggest that the type of sport heavily impacts the revenue made.
+
+The results for research question three are similar to research question two. The Kruskal-Wallis test showed that there were significant differences in profit across all sports. The post-hoc Dunn's test resulted in the same conclusion of all pairwise comparisons for sports profit were statistically different. Looking at the grouped means bar plot, we can see the four sports Baseball and Softball had negative mean profit $M$ = -284,203.8 and $M$ = -239,017.4 respectively, and Football and Basketball had mean profits of $M$ = 7,182,326.9 and $M$ = 381,774.5 respectively. Therefore that these findings suggest that Football represents the majority of the entire schools athletics profit.
